@@ -1,0 +1,121 @@
+# Bank Account System (OOP)
+
+import re
+
+# Base class
+class Account:
+    def __init__(self, acc_no, name, balance):
+        self.acc_no = acc_no
+        self.name = name
+        self.__balance = balance   # encapsulation
+
+    # check balance
+    def get_balance(self):
+        return self.__balance
+
+    # deposit
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            print("Amount deposited.")
+        else:
+            print("Invalid amount.")
+
+    # default withdraw
+    def withdraw(self, amount):
+        if amount <= self.__balance:
+            self.__balance -= amount
+            print("Withdrawal successful.")
+        else:
+            print("Not enough balance.")
+
+    def show(self):
+        print("Account No:", self.acc_no)
+        print("Name:", self.name)
+        print("Balance:", self.__balance)
+
+
+# Savings Account
+class SavingsAccount(Account):
+    def withdraw(self, amount):
+        if amount > 10000:
+            print("Limit exceeded for Savings Account.")
+        else:
+            super().withdraw(amount)
+
+
+# Current Account
+class CurrentAccount(Account):
+    def withdraw(self, amount):
+        # overdraft allowed up to -5000
+        if self.get_balance() - amount < -5000:
+            print("Overdraft limit reached.")
+        else:
+            self._Account__balance = self.get_balance() - amount
+            print("Withdrawal successful (Current Account).")
+
+
+# Regex validation
+def valid_account(acc_no):
+    pattern = r"^[0-9]{10}$"   # 10 digit account number
+    return re.match(pattern, acc_no)
+
+
+# Main program
+print("----- Bank System -----")
+
+acc_no = input("Enter account number (10 digits): ")
+
+if not valid_account(acc_no):
+    print("Invalid account number format.")
+    exit()
+
+name = input("Enter name: ")
+balance = float(input("Enter initial balance: "))
+
+print("\n1. Savings Account")
+print("2. Current Account")
+
+choice = input("Choose account type: ")
+
+if choice == "1":
+    acc = SavingsAccount(acc_no, name, balance)
+
+elif choice == "2":
+    acc = CurrentAccount(acc_no, name, balance)
+
+else:
+    print("Invalid choice")
+    exit()
+
+# Menu
+while True:
+    print("\n----- Menu -----")
+    print("1. Deposit")
+    print("2. Withdraw")
+    print("3. Show Account")
+    print("4. Balance Check")
+    print("5. Exit")
+
+    option = input("Enter choice: ")
+
+    if option == "1":
+        amt = float(input("Enter amount: "))
+        acc.deposit(amt)
+
+    elif option == "2":
+        amt = float(input("Enter amount: "))
+        acc.withdraw(amt)
+
+    elif option == "3":
+        acc.show()
+
+    elif option == "4":
+        print("Balance:", acc.get_balance())
+
+    elif option == "5":
+        print("Thank you for using bank system.")
+        break
+
+    else:
+        print("Invalid choice.")
