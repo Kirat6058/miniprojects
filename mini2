@@ -1,0 +1,43 @@
+# Dictionary to store student names and marks
+students = {}
+
+# Input number of students
+n = int(input("Enter the number of students: "))
+
+# Input student details
+for i in range(n):
+    name = input(f"\nEnter name of student {i + 1}: ")
+    marks = float(input(f"Enter marks of {name}: "))
+    students[name] = marks
+
+# Display all student records
+print("\n===== Student Records =====")
+for name, marks in students.items():
+    print(f"{name}: {marks}")
+
+# Calculate average marks
+average = sum(students.values()) / len(students)
+print(f"\nAverage Marks: {average:.2f}")
+
+# Find topper
+topper = max(students, key=students.get)
+print(f"Topper: {topper} ({students[topper]} marks)")
+
+# Assign grades using list comprehension
+grades = [
+    (
+        name,
+        marks,
+        "A" if marks >= 90 else
+        "B" if marks >= 75 else
+        "C" if marks >= 60 else
+        "D" if marks >= 40 else
+        "F"
+    )
+    for name, marks in students.items()
+]
+
+# Display grades
+print("\n===== Student Grades =====")
+for name, marks, grade in grades:
+    print(f"{name}: {marks} -> Grade {grade}")
