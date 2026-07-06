@@ -1,0 +1,72 @@
+# Log File Analyzer
+
+import re
+
+input_file = "server.log"
+output_file = "report.txt"
+
+# Regex patterns
+ip_pattern = r"\b\d{1,3}(\.\d{1,3}){3}\b"
+time_pattern = r"\d{2}:\d{2}:\d{2}"
+error_pattern = r"ERROR\s\d+"
+
+# Generator to read file line by line
+def read_lines(file_name):
+    try:
+        with open(file_name, "r") as f:
+            for line in f:
+                yield line
+    except FileNotFoundError:
+        print("Log file not found.")
+        return
+
+
+# Analyzer function
+def analyze_logs():
+    ip_count = {}
+    error_count = {}
+    timestamps = []
+
+    for line in read_lines(input_file):
+
+        # extract IP
+        ips = re.findall(ip_pattern, line)
+        for ip in ips:
+            ip_count[ip] = ip_count.get(ip, 0) + 1
+
+        # extract error codes
+        errors = re.findall(error_pattern, line)
+        for err in errors:
+            error_count[err] = error_count.get(err, 0) + 1
+
+        # extract timestamps
+        times = re.findall(time_pattern, line)
+        timestamps.extend(times)
+
+    return ip_count, error_count, timestamps
+
+
+# Save report
+def save_report(ip_count, error_count, timestamps):
+    with open(output_file, "w") as f:
+        f.write("===== LOG REPORT =====\n\n")
+
+        f.write("IP ADDRESS COUNT:\n")
+        for ip, count in ip_count.items():
+            f.write(f"{ip} -> {count}\n")
+
+        f.write("\nERROR CODE COUNT:\n")
+        for err, count in error_count.items():
+            f.write(f"{err} -> {count}\n")
+
+        f.write("\nTOTAL TIMESTAMPS FOUND: " + str(len(timestamps)) + "\n")
+
+    print("Report generated successfully.")
+
+
+# Main program
+result = analyze_logs()
+
+if result:
+    ip_data, error_data, time_data = result
+    save_report(ip_data, error_data, time_data)
